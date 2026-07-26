@@ -1,0 +1,9 @@
+.git
+.env
+.venv
+data
+backups
+secrets
+__pycache__
+*.session
+*.pyc

@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Telegram CRM</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <section id="login-view" class="login-shell">
+      <div class="login-card">
+        <p class="eyebrow">PROTECTED ACCESS</p>
+        <h1>Telegram CRM</h1>
+        <p class="lead">Вход в закрытую административную панель.</p>
+        <form id="admin-login-form" class="stacked-form login-form">
+          <label for="admin-username">Логин</label>
+          <input id="admin-username" type="text" autocomplete="username" required />
+          <label for="admin-password">Пароль</label>
+          <input id="admin-password" type="password" autocomplete="current-password" required />
+          <button class="primary-button" type="submit">Войти</button>
+        </form>
+        <p id="login-status" class="form-status" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <div id="app-view" class="app-layout hidden">
+      <aside id="sidebar" class="sidebar" aria-label="Основная навигация">
+        <div class="sidebar-brand">
+          <span class="brand-mark">T</span>
+          <div><strong>Telegram</strong><span>CRM</span></div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <button class="nav-button active" type="button" data-view="crm">
+            <span class="nav-icon">01</span><span>CRM</span>
+          </button>
+          <button class="nav-button" type="button" data-view="accounts">
+            <span class="nav-icon">02</span><span>Аккаунты</span><span id="nav-account-count" class="nav-count">0</span>
+          </button>
+          <button class="nav-button" type="button" data-view="connect">
+            <span class="nav-icon">03</span><span>Подключить</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-footer">
+          <span id="admin-name" class="admin-name"></span>
+          <button class="logout-link" id="logout-button" type="button">Выйти из панели</button>
+        </div>
+      </aside>
+      <button id="sidebar-overlay" class="sidebar-overlay" type="button" aria-label="Закрыть меню"></button>
+
+      <div class="workspace">
+        <header class="topbar">
+          <button id="burger-button" class="burger-button" type="button" aria-label="Открыть меню" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <div class="topbar-title">
+            <p class="eyebrow" id="view-eyebrow">TELEGRAM CRM</p>
+            <h1 id="view-title">История диалогов</h1>
+          </div>
+          <button class="outline-button" id="refresh-button" type="button">Обновить</button>
+        </header>
+
+        <main class="content">
+          <section id="view-crm" class="app-section">
+            <div class="section-intro">
+              <div>
+                <h2>Диалоги</h2>
+                <p>Выберите аккаунт и откройте историю доступных Telegram-чатов.</p>
+              </div>
+              <div class="crm-tools">
+                <label class="account-picker-label" for="crm-account-picker">
+                  <span>Аккаунт <span class="live-badge">LIVE · 1 SEC</span></span>
+                  <span class="account-picker-control">
+                    <span id="crm-account-avatar" class="avatar avatar-small"><span>TG</span><img alt="" class="hidden"></span>
+                    <select id="crm-account-picker">
+                      <option value="">Выберите аккаунт</option>
+                    </select>
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <section id="crm-section" class="panel crm-section">
+              <div class="crm-grid">
+                <aside class="dialogs-column">
+                  <div class="dialogs-tools">
+                    <div class="dialogs-title-row">
+                      <div class="column-label">ДИАЛОГИ</div>
+                      <button id="new-dialog-button" class="new-dialog-button" type="button" aria-label="Создать чат, группу или канал">+</button>
+                    </div>
+                    <form id="global-search-form" class="global-search-form" role="search">
+                      <label class="sr-only" for="global-search-input">Поиск по всем перепискам</label>
+                      <input id="global-search-input" type="search" minlength="2" maxlength="128" placeholder="Поиск по перепискам…" autocomplete="off">
+                      <button class="search-submit-button" type="submit" aria-label="Найти">⌕</button>
+                    </form>
+                  </div>
+                  <section id="global-search-panel" class="global-search-panel hidden" aria-live="polite">
+                    <div class="search-panel-header">
+                      <strong id="global-search-title">Результаты</strong>
+                      <button id="global-search-close" class="icon-button" type="button" aria-label="Закрыть результаты">×</button>
+                    </div>
+                    <div id="global-search-results" class="global-search-results"></div>
+                  </section>
+                  <div id="dialogs-list" class="dialogs-list">
+                    <div class="empty-state">Выберите аккаунт сверху, чтобы загрузить диалоги.</div>
+                  </div>
+                </aside>
+                <section class="history-column">
+                  <div class="history-header">
+                    <button id="chat-info-button" class="chat-identity-button" type="button" disabled aria-expanded="false">
+                      <span id="chat-avatar" class="chat-avatar"><span>TG</span></span>
+                      <span class="chat-heading-text">
+                        <span id="chat-title" class="chat-title">Выберите диалог</span>
+                        <span id="chat-subtitle" class="chat-subtitle">Откройте чат слева</span>
+                      </span>
+                    </button>
+                    <span id="message-count" class="count">0</span>
+                  </div>
+                  <aside id="chat-profile-panel" class="chat-profile-panel hidden">
+                    <div id="chat-profile-content"></div>
+                  </aside>
+                  <div id="messages-list" class="messages-list">
+                    <div class="empty-state">Здесь появятся последние сообщения.</div>
+                  </div>
+                  <form id="message-form" class="message-composer hidden">
+                    <label class="sr-only" for="message-text">Новое сообщение</label>
+                    <textarea id="message-text" maxlength="4096" rows="2" placeholder="Напишите сообщение…" required></textarea>
+                    <div class="composer-actions">
+                      <span id="composer-status" class="composer-status" aria-live="polite">Ctrl + Enter — отправить</span>
+                      <button class="primary-button send-button" type="submit">Отправить</button>
+                    </div>
+                  </form>
+                </section>
+              </div>
+            </section>
+            <div id="new-dialog-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="new-dialog-title">
+              <form id="new-dialog-form" class="modal-card">
+                <div class="modal-heading">
+                  <div><span class="column-label">TELEGRAM</span><h3 id="new-dialog-title">Новый чат</h3></div>
+                  <button id="new-dialog-close" class="icon-button" type="button" aria-label="Закрыть">×</button>
+                </div>
+                <label for="new-dialog-kind">Тип</label>
+                <select id="new-dialog-kind">
+                  <option value="private">Личный чат</option>
+                  <option value="group">Группа</option>
+                  <option value="channel">Канал</option>
+                </select>
+                <div id="new-dialog-private-fields" class="modal-fields">
+                  <label for="new-dialog-target">Пользователь</label>
+                  <input id="new-dialog-target" maxlength="128" placeholder="@username или +79990000000" autocomplete="off">
+                  <label for="new-dialog-first-message">Первое сообщение <span>(необязательно)</span></label>
+                  <textarea id="new-dialog-first-message" maxlength="4096" rows="3" placeholder="Если оставить пустым, CRM просто откроет профиль"></textarea>
+                </div>
+                <div id="new-dialog-collective-fields" class="modal-fields hidden">
+                  <label for="new-dialog-name">Название</label>
+                  <input id="new-dialog-name" maxlength="128" placeholder="Название группы или канала">
+                  <label for="new-dialog-about">Описание <span>(необязательно)</span></label>
+                  <textarea id="new-dialog-about" maxlength="255" rows="2" placeholder="Краткое описание"></textarea>
+                  <label for="new-dialog-participants">Участники <span id="participants-hint">по одному username или телефону в строке</span></label>
+                  <textarea id="new-dialog-participants" rows="4" placeholder="@username&#10;+79990000000"></textarea>
+                </div>
+                <div id="new-dialog-status" class="form-status modal-status" aria-live="polite"></div>
+                <div class="modal-actions">
+                  <button id="new-dialog-cancel" class="outline-button" type="button">Отмена</button>
+                  <button class="primary-button" type="submit">Продолжить</button>
+                </div>
+              </form>
+            </div>
+            <div id="crm-toast" class="crm-toast hidden" role="status" aria-live="polite"></div>
+          </section>
+
+          <section id="view-accounts" class="app-section hidden">
+            <div class="section-intro">
+              <div>
+                <h2>Подключённые аккаунты</h2>
+                <p>Сессии хранятся на сервере в зашифрованном виде.</p>
+              </div>
+              <button class="primary-button compact-button" type="button" data-go-view="connect">Добавить аккаунт</button>
+            </div>
+            <article class="panel accounts-panel standalone-panel">
+              <div class="panel-heading panel-heading-row">
+                <div>
+                  <p class="eyebrow">CONNECTED ACCOUNTS</p>
+                  <h2>Аккаунты</h2>
+                </div>
+                <span id="account-count" class="count">0</span>
+              </div>
+              <div id="accounts-list" class="accounts-list">
+                <div class="empty-state">Загрузка подключённых аккаунтов…</div>
+              </div>
+            </article>
+          </section>
+
+          <section id="view-connect" class="app-section hidden">
+            <div class="section-intro">
+              <div>
+                <h2>Подключить Telegram</h2>
+                <p>Понадобится номер телефона, одноразовый код и, при наличии, пароль 2FA.</p>
+              </div>
+            </div>
+            <article class="panel connect-panel standalone-panel narrow-panel">
+              <div class="panel-heading">
+                <p class="eyebrow">NEW TELEGRAM SESSION</p>
+                <h2>Новый аккаунт</h2>
+              </div>
+
+              <form id="phone-form" class="stacked-form">
+                <label for="phone">Номер телефона</label>
+                <input id="phone" type="tel" inputmode="tel" placeholder="+79990000000" required />
+                <label for="label">Название <span>необязательно</span></label>
+                <input id="label" type="text" maxlength="120" placeholder="Рабочий аккаунт" />
+                <button class="primary-button" type="submit">Отправить код</button>
+              </form>
+
+              <form id="code-form" class="stacked-form hidden">
+                <p class="step-label">02 / VERIFY</p>
+                <label for="code">Код из Telegram</label>
+                <input id="code" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="12345" required />
+                <button class="primary-button" type="submit">Подтвердить вход</button>
+              </form>
+
+              <form id="password-form" class="stacked-form hidden">
+                <p class="step-label">03 / 2FA</p>
+                <label for="password">Пароль двухэтапной проверки</label>
+                <input id="password" type="password" autocomplete="current-password" required />
+                <button class="primary-button" type="submit">Завершить вход</button>
+              </form>
+
+              <p id="form-status" class="form-status" aria-live="polite">Введите номер аккаунта, чтобы начать подключение.</p>
+            </article>
+          </section>
+        </main>
+      </div>
+    </div>
+    <script src="/static/app.js"></script>
+  </body>
+</html>

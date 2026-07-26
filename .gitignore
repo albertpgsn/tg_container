@@ -1,0 +1,13 @@
+.env
+.env.docker
+*.session
+*.session-journal
+data/
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+.setup-venv/
+secrets/*
+!secrets/.gitkeep
+backups/
